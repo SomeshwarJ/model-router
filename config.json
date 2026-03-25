@@ -1,0 +1,390 @@
+{
+  "models": [
+    {
+      "id": "phi3-mini",
+      "model_name": "phi3:mini",
+      "provider": "ollama",
+      "parameters": {
+        "temperature": 0.5,
+        "max_tokens": 300
+      },
+      "metadata": {
+        "quality_score": 0.65,
+        "latency_score": 0.95,
+        "cost_score": 1.0,
+        "context_length": 2048,
+        "tags": [
+          "fastest",
+          "routing",
+          "lightweight"
+        ]
+      }
+    },
+    {
+      "id": "gemma2-2b",
+      "model_name": "gemma2:2b",
+      "provider": "ollama",
+      "parameters": {
+        "temperature": 0.6,
+        "max_tokens": 300
+      },
+      "metadata": {
+        "quality_score": 0.6,
+        "latency_score": 0.97,
+        "cost_score": 1.0,
+        "context_length": 2048,
+        "tags": [
+          "fastest",
+          "lightweight",
+          "routing"
+        ]
+      }
+    },
+    {
+      "id": "llama3.2-3b",
+      "model_name": "llama3.2:3b",
+      "provider": "ollama",
+      "parameters": {
+        "temperature": 0.6,
+        "max_tokens": 400
+      },
+      "metadata": {
+        "quality_score": 0.68,
+        "latency_score": 0.92,
+        "cost_score": 1.0,
+        "context_length": 4096,
+        "tags": [
+          "fast",
+          "chat",
+          "lightweight"
+        ]
+      }
+    },
+    {
+      "id": "gemma2",
+      "model_name": "gemma2:latest",
+      "provider": "ollama",
+      "parameters": {
+        "temperature": 0.7,
+        "max_tokens": 500
+      },
+      "metadata": {
+        "quality_score": 0.78,
+        "latency_score": 0.75,
+        "cost_score": 1.0,
+        "context_length": 8192,
+        "tags": [
+          "fast",
+          "summarization",
+          "chat",
+          "data-extraction"
+        ]
+      }
+    },
+    {
+      "id": "mistral",
+      "model_name": "mistral:latest",
+      "provider": "ollama",
+      "parameters": {
+        "temperature": 0.5,
+        "max_tokens": 500
+      },
+      "metadata": {
+        "quality_score": 0.8,
+        "latency_score": 0.72,
+        "cost_score": 1.0,
+        "context_length": 8192,
+        "tags": [
+          "fast",
+          "chat",
+          "data-extraction",
+          "instruction-following"
+        ]
+      }
+    },
+    {
+      "id": "gemini-flash",
+      "model_name": "gemini-3-flash-preview:latest",
+      "provider": "ollama",
+      "parameters": {
+        "temperature": 0.6,
+        "max_tokens": 800
+      },
+      "metadata": {
+        "quality_score": 0.82,
+        "latency_score": 0.78,
+        "cost_score": 1.0,
+        "context_length": 128000,
+        "tags": [
+          "fast",
+          "long-context",
+          "summarization",
+          "rag",
+          "chat"
+        ]
+      }
+    },
+    {
+      "id": "codellama",
+      "model_name": "codellama:latest",
+      "provider": "ollama",
+      "parameters": {
+        "temperature": 0.4,
+        "max_tokens": 800
+      },
+      "metadata": {
+        "quality_score": 0.88,
+        "latency_score": 0.55,
+        "cost_score": 1.0,
+        "context_length": 16384,
+        "tags": [
+          "code",
+          "reasoning",
+          "long-context"
+        ]
+      }
+    },
+    {
+      "id": "llama3",
+      "model_name": "llama3:latest",
+      "provider": "ollama",
+      "parameters": {
+        "temperature": 0.7,
+        "max_tokens": 500
+      },
+      "metadata": {
+        "quality_score": 0.85,
+        "latency_score": 0.6,
+        "cost_score": 1.0,
+        "context_length": 8192,
+        "tags": [
+          "reasoning",
+          "code",
+          "instruction-following",
+          "rag"
+        ]
+      }
+    },
+    {
+      "id": "gpt-oss",
+      "model_name": "gpt-oss:latest",
+      "provider": "ollama",
+      "parameters": {
+        "temperature": 0.7,
+        "max_tokens": 1000
+      },
+      "metadata": {
+        "quality_score": 0.92,
+        "latency_score": 0.25,
+        "cost_score": 1.0,
+        "context_length": 16384,
+        "tags": [
+          "heavy-reasoning",
+          "instruction-following",
+          "long-context",
+          "code"
+        ],
+        "notes": "13GB model - requires ~10.8GB RAM. Use only when other models unavailable."
+      }
+    }
+  ],
+  "groups": {
+    "default": {
+      "models": [
+        "llama3",
+        "mistral",
+        "gemma2"
+      ],
+      "routing_strategy": "round-robin"
+    },
+    "fastest": {
+      "models": [
+        "phi3-mini",
+        "gemma2-2b",
+        "llama3.2-3b"
+      ],
+      "routing_strategy": "priority"
+    },
+    "fast": {
+      "models": [
+        "gemini-flash",
+        "gemma2",
+        "mistral",
+        "llama3.2-3b"
+      ],
+      "routing_strategy": "priority"
+    },
+    "reasoning": {
+      "models": [
+        "llama3",
+        "codellama",
+        "gpt-oss"
+      ],
+      "routing_strategy": "priority"
+    },
+    "code": {
+      "models": [
+        "codellama",
+        "llama3",
+        "gpt-oss"
+      ],
+      "routing_strategy": "priority"
+    },
+    "long_context": {
+      "models": [
+        "gemini-flash",
+        "codellama",
+        "gpt-oss"
+      ],
+      "routing_strategy": "priority"
+    }
+  },
+  "use_cases": {
+    "summarization": {
+      "description": "Condense long text into key points",
+      "weights": {
+        "latency": 0.4,
+        "cost": 0.35,
+        "quality": 0.25
+      },
+      "minimum_requirements": {
+        "quality_score": 0.6,
+        "context_length": 2048
+      },
+      "preferred_tags": [
+        "fast",
+        "summarization"
+      ],
+      "fallback_group": "fast"
+    },
+    "reasoning": {
+      "description": "Complex multi-step reasoning, planning, analysis",
+      "weights": {
+        "quality": 0.65,
+        "latency": 0.2,
+        "cost": 0.15
+      },
+      "minimum_requirements": {
+        "quality_score": 0.8,
+        "context_length": 4096
+      },
+      "preferred_tags": [
+        "reasoning",
+        "instruction-following"
+      ],
+      "fallback_group": "reasoning"
+    },
+    "code_generation": {
+      "description": "Write, debug, review, or explain code",
+      "weights": {
+        "quality": 0.6,
+        "latency": 0.25,
+        "cost": 0.15
+      },
+      "minimum_requirements": {
+        "quality_score": 0.75,
+        "context_length": 4096
+      },
+      "preferred_tags": [
+        "code",
+        "reasoning"
+      ],
+      "fallback_group": "code"
+    },
+    "routing_decision": {
+      "description": "Classify intent, pick next LangGraph node \u2014 runs on every request",
+      "weights": {
+        "latency": 0.55,
+        "cost": 0.35,
+        "quality": 0.1
+      },
+      "minimum_requirements": {
+        "quality_score": 0.58,
+        "context_length": 1024
+      },
+      "preferred_tags": [
+        "fastest",
+        "routing",
+        "lightweight"
+      ],
+      "fallback_group": "fastest"
+    },
+    "rag_answer": {
+      "description": "Answer grounded in retrieved document chunks",
+      "weights": {
+        "quality": 0.55,
+        "latency": 0.25,
+        "cost": 0.2
+      },
+      "minimum_requirements": {
+        "quality_score": 0.75,
+        "context_length": 8192
+      },
+      "preferred_tags": [
+        "rag",
+        "reasoning",
+        "instruction-following"
+      ],
+      "fallback_group": "reasoning"
+    },
+    "chat": {
+      "description": "General conversational interaction",
+      "weights": {
+        "latency": 0.45,
+        "quality": 0.35,
+        "cost": 0.2
+      },
+      "minimum_requirements": {
+        "quality_score": 0.6,
+        "context_length": 2048
+      },
+      "preferred_tags": [
+        "chat",
+        "fast"
+      ],
+      "fallback_group": "default"
+    },
+    "data_extraction": {
+      "description": "Extract structured fields from unstructured text",
+      "weights": {
+        "quality": 0.65,
+        "latency": 0.2,
+        "cost": 0.15
+      },
+      "minimum_requirements": {
+        "quality_score": 0.75,
+        "context_length": 4096
+      },
+      "preferred_tags": [
+        "data-extraction",
+        "instruction-following"
+      ],
+      "fallback_group": "reasoning"
+    },
+    "long_context": {
+      "description": "Process large documents, long transcripts, big codebases",
+      "weights": {
+        "quality": 0.5,
+        "latency": 0.3,
+        "cost": 0.2
+      },
+      "minimum_requirements": {
+        "quality_score": 0.75,
+        "context_length": 32768
+      },
+      "preferred_tags": [
+        "long-context",
+        "fast"
+      ],
+      "fallback_group": "long_context"
+    }
+  },
+  "settings": {
+    "health_check_enabled": true,
+    "health_check_timeout_seconds": 3,
+    "score_tag_bonus": 0.05,
+    "minimum_composite_score": 0.5,
+    "feedback_logging_enabled": true,
+    "feedback_log_path": "logs/feedback.jsonl"
+  }
+}

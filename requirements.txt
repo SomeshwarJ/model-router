@@ -1,0 +1,7 @@
+langchain
+langchain-ollama
+langchain-core
+langgraph
+httpx
+pytest
+flask
