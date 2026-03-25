@@ -1,3 +1,9 @@
+"""
+Module 4 — urgency_adjuster.py
+Rewrites use-case weights based on the urgency hint.
+Cost weight is NEVER touched — only quality/latency balance shifts.
+"""
+
 from dataclasses import dataclass
 from .config_loader import UseCaseWeights
 

@@ -1,3 +1,9 @@
+"""
+Module 2 — health_checker.py
+Pings each Ollama model concurrently to check availability.
+Returns a simple {model_id: bool} map before routing begins.
+"""
+
 import asyncio
 import time
 from typing import Dict, List
@@ -24,7 +30,7 @@ async def _ping_model(
         )
         if response.status_code != 200:
             print(f"[health_checker] {model.id}: Ollama responded {response.status_code}")
-            return (model.id, False)
+            return model.id, False
 
         data = response.json()
         available_names = [m.get("name", "") for m in data.get("models", [])]
@@ -53,10 +59,7 @@ async def _check_all_async(
     timeout: int
 ) -> Dict[str, bool]:
     if not HTTPX_AVAILABLE:
-        raise ImportError(
-            "httpx is required for health checks. "
-            "Install it with: pip install httpx"
-        )
+        raise ImportError("httpx is required for health checks. Install it with: pip install httpx")
 
     async with httpx.AsyncClient() as client:
         tasks = [_ping_model(model, timeout, client) for model in models]
@@ -81,10 +84,7 @@ def check_health(
         print("[health_checker] Health checks disabled — marking all models healthy")
         return {model.id: True for model in models}
 
-    print(
-        f"[health_checker] Pinging {len(models)} models "
-        f"(timeout={settings.health_check_timeout_seconds}s)..."
-    )
+    print(f"[health_checker] Pinging {len(models)} models (timeout={settings.health_check_timeout_seconds}s)...")
     start = time.time()
 
     try:

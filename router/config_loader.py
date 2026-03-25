@@ -1,3 +1,9 @@
+"""
+Module 1 — config_loader.py
+Reads config.json and converts it into clean Python dataclasses.
+Every other module depends on the output of this one.
+"""
+
 import json
 import os
 from dataclasses import dataclass, field
@@ -97,15 +103,18 @@ def _resolve_env(value: Optional[str]) -> Optional[str]:
 def _parse_models(raw_models: list) -> Dict[str, ModelConfig]:
     models = {}
     for i, m in enumerate(raw_models):
+        # Check required fields exist
         for required in ("id", "model_name", "provider", "metadata"):
             if required not in m:
                 raise ValueError(f"models[{i}]: missing required field '{required}'")
 
+        # Validate metadata has required fields
         meta_raw = m["metadata"]
         for required_meta in ("quality_score", "latency_score", "cost_score", "context_length"):
             if required_meta not in meta_raw:
                 raise ValueError(f"models[{i}] (id='{m.get('id', '?')}') metadata: missing required field '{required_meta}'")
 
+        # Create ModelMetadata object (runs __post_init__ validation)
         metadata = ModelMetadata(
             quality_score=float(meta_raw["quality_score"]),
             latency_score=float(meta_raw["latency_score"]),
@@ -114,6 +123,7 @@ def _parse_models(raw_models: list) -> Dict[str, ModelConfig]:
             tags=meta_raw.get("tags", [])
         )
 
+        # Create ModelConfig object
         models[m.get("id")] = ModelConfig(
             id=m.get("id"),
             model_name=m.get("model_name"),
@@ -129,14 +139,17 @@ def _parse_models(raw_models: list) -> Dict[str, ModelConfig]:
 def _parse_groups(raw_groups: dict, known_model_ids: List[str]) -> Dict[str, GroupConfig]:
     groups = {}
     for group_name, group_data in raw_groups.items():
+        # Check required fields
         for required in ("models", "routing_strategy"):
             if required not in group_data:
                 raise ValueError(f"groups.{group_name}: missing required field '{required}'")
 
+        # Validate all models exist in models section
         for model_id in group_data["models"]:
             if model_id not in known_model_ids:
                 raise ValueError(f"groups.{group_name}: model '{model_id}' is not defined under 'models'. Known models: {known_model_ids}")
 
+        # Validate routing_strategy (done in __post_init__)
         groups[group_name] = GroupConfig(
             name=group_name,
             models=group_data["models"],
@@ -148,6 +161,7 @@ def _parse_groups(raw_groups: dict, known_model_ids: List[str]) -> Dict[str, Gro
 def _parse_use_cases(raw_use_cases: dict, known_group_names: List[str]) -> Dict[str, UseCaseConfig]:
     use_cases = {}
     for uc_name, uc_data in raw_use_cases.items():
+        # Check all required fields exist
         for required in ("description", "weights", "minimum_requirements",
                          "preferred_tags", "fallback_group"):
             if required not in uc_data:
@@ -155,12 +169,14 @@ def _parse_use_cases(raw_use_cases: dict, known_group_names: List[str]) -> Dict[
                     f"use_cases.{uc_name}: missing required field '{required}'"
                 )
 
+        # Validate fallback_group exists
         if uc_data["fallback_group"] not in known_group_names:
             raise ValueError(
                 f"use_cases.{uc_name}: fallback_group '{uc_data['fallback_group']}' "
                 f"not defined under 'groups'. Known groups: {known_group_names}"
             )
 
+        # Parse weights (must sum to 1.0)
         weights_raw = uc_data["weights"]
         weights = UseCaseWeights(
             quality=float(weights_raw.get("quality", 0.0)),
@@ -168,12 +184,14 @@ def _parse_use_cases(raw_use_cases: dict, known_group_names: List[str]) -> Dict[
             cost=float(weights_raw.get("cost", 0.0))
         )
 
+        # Parse minimum requirements
         min_req_raw = uc_data["minimum_requirements"]
         min_req = MinimumRequirements(
             quality_score=float(min_req_raw.get("quality_score", 0.0)),
             context_length=int(min_req_raw.get("context_length", 0))
         )
 
+        # Create UseCaseConfig
         use_cases[uc_name] = UseCaseConfig(
             name=uc_name,
             description=uc_data["description"],

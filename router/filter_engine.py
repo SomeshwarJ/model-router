@@ -1,3 +1,9 @@
+"""
+Module 3 — filter_engine.py
+Eliminates models that cannot handle the request BEFORE scoring.
+Runs hard filters: health, context_length, quality_score, prefer_cost.
+"""
+
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 

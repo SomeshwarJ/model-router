@@ -1,3 +1,9 @@
+"""
+Module 8 — langgraph_integration.py
+Makes WrappedLangchainClient native inside LangGraph.
+Provides decorator, base class, and manual helper.
+"""
+
 import functools
 from typing import Any, Callable, Dict, Optional
 

@@ -1,3 +1,9 @@
+"""
+Module 5 — scorer.py
+Computes composite score per model using adjusted weights + tag bonus.
+Returns sorted list of ScoredModel, highest score first.
+"""
+
 from dataclasses import dataclass
 from typing import List
 from .config_loader import ModelConfig, UseCaseConfig, RecommendationSettings

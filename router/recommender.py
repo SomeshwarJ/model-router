@@ -1,3 +1,9 @@
+"""
+Module 6 — recommender.py
+Orchestrates Modules 1-5. Picks the winner, builds explanation,
+handles fallback, writes feedback log.
+"""
+
 import json
 import os
 import time

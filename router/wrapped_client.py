@@ -1,3 +1,9 @@
+"""
+Module 7 — wrapped_client.py
+Public-facing API. Developer imports this and calls .auto() + .invoke().
+Thin layer: calls recommender → invokes winner → handles fallback on failure.
+"""
+
 import threading
 from typing import Any, Dict, List, Optional
 
@@ -314,7 +320,7 @@ class WrappedLangchainClient:
         )
         self._last_recommendation = recommendation
 
-        use_case_name       = recommendation.use_case_name
+        use_case_name = recommendation.use_case_name
         fallback_group_name = (
             recommendation.fallback_group
             or self._config.use_cases[use_case_name].fallback_group
